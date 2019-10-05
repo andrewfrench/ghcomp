@@ -3,6 +3,8 @@ GHComp
 
 #### A utility to compress and decompress sets of geohashes.
 
+The inflate and deflate utilities do not preserve duplicate geohashes or the order of the dataset.
+
 ## Deflate
 
 The Deflate utility accepts io.Reader containing newline-delimited geohashes of equal length, for example:
@@ -14,8 +16,6 @@ bdvkjkjbpr1t
 bdvkjkn00jdn
 bdvkjkjbremh
 ```
-
-Duplicate geohashes will be discarded. The deflated output will contain only unique points.
 
 The following example reads an input file, `data.txt`, and writes the deflated dataset to `deflated.txt`.
 

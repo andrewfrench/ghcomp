@@ -3,7 +3,7 @@ GHComp
 
 #### A utility to compress and decompress sets of geohashes.
 
-The inflate and deflate utilities do not preserve duplicate geohashes or the order of the dataset.
+The Deflate utility removes redundant geohash information from sets of geohashes. The ratio of deflated data to inflated data is variable and depends on the clustering of the dataset: data sets containing points that are physically closer to each other will share more of their geohashes, allowing for large compression ratios. Data sets containing points that are physically far from each other will have more unique geohash information and cannot be as aggressively compressed. The Inflate and Deflate utilities do not preserve duplicate geohashes or the order of the dataset.
 
 ## Deflate
 

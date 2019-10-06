@@ -1,22 +1,20 @@
 GHComp
 ======
 
-#### A utility to compress and decompress sets of geohashes.
+#### A utility to compress and decompress geohash sets.
 
-The Deflate utility removes redundant geohash information from sets of geohashes. The ratio of deflated data to inflated data is variable and depends on the clustering of the dataset: data sets containing points that are physically closer to each other will share more of their geohashes, allowing for large compression ratios. Data sets containing points that are physically far from each other will have more unique geohash information and cannot be as aggressively compressed. The Inflate and Deflate utilities do not preserve duplicate geohashes or the order of the dataset.
+The Deflate utility removes redundant geohash information from sets of geohashes. The ratio of deflated data to inflated data is variable and depends on the clustering of the dataset; those containing points that are physically closer to each other will share a larger portion of each geohash, allowing for smaller deflated datasets. In datasets containing points that are physically far from each other, each geohash will be have more unique data and cannot be as aggressively deflated. The Inflate and Deflate utilities do not preserve duplicate geohashes or the order of the dataset.
 
 ## Deflate
 
 The Deflate utility accepts an `io.Reader` containing newline-delimited geohashes of equal length, for example:
 
 ```
-...
 bdvkhunfnc90
 bdvkj7vyvtz5
 bdvkjkjbpr1t
 bdvkjkn00jdn
 bdvkjkjbremh
-...
 ```
 
 The following example reads an input file, `data.txt`, and writes the deflated dataset to `deflated.txt`.
@@ -50,7 +48,11 @@ $ go run cmd/deflate/deflate.go data.txt deflated.txt
 
 ## Inflate
 
-The Inflate utility accepts an `io.Reader` providing deflated geohash data as produced by the Deflate utility.
+The Inflate utility accepts an `io.Reader` providing deflated geohash data as produced by the Deflate utility, for example:
+
+```
+bdvkhunfnc90.j7vyvtz5.kjbremh.pr1t.n00jdn.
+```
 
 The following example reads an input file, `deflated.txt`, and writes the inflated dataset to `inflated.txt`.
 

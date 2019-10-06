@@ -7,14 +7,16 @@ The inflate and deflate utilities do not preserve duplicate geohashes or the ord
 
 ## Deflate
 
-The Deflate utility accepts io.Reader containing newline-delimited geohashes of equal length, for example:
+The Deflate utility accepts an `io.Reader` containing newline-delimited geohashes of equal length, for example:
 
 ```
+...
 bdvkhunfnc90
 bdvkj7vyvtz5
 bdvkjkjbpr1t
 bdvkjkn00jdn
 bdvkjkjbremh
+...
 ```
 
 The following example reads an input file, `data.txt`, and writes the deflated dataset to `deflated.txt`.
@@ -42,7 +44,7 @@ func main() {
 
 ## Inflate
 
-The Inflate utility accepts a reader providing deflated geohash data as produced by the Deflate utility.
+The Inflate utility accepts an `io.Reader` providing deflated geohash data as produced by the Deflate utility.
 
 The following example reads an input file, `deflated.txt`, and writes the inflated dataset to `inflated.txt`.
 

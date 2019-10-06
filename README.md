@@ -23,6 +23,9 @@ The following example reads an input file, `data.txt`, and writes the deflated d
 package main
 
 import (
+	"os"
+	"log"
+	
 	"github.com/andrewfrench/ghcomp"
 )
 
@@ -47,6 +50,9 @@ The following example reads an input file, `deflated.txt`, and writes the inflat
 package main
 
 import (
+	"os"
+	"log"
+	
 	"github.com/andrewfrench/ghcomp"
 )
 

@@ -4,7 +4,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/andrewfrench/ghcomp/pkh/ghcomp"
+	"github.com/andrewfrench/ghcomp/pkg/ghcomp"
 )
 
 func main() {
@@ -22,7 +22,7 @@ func main() {
 		log.Fatalf("Failed to create destination file: %v", err)
 	}
 
-	err := ghcomp.NewDeflater(in, out).Deflate()
+	err = ghcomp.NewDeflater(in, out).Deflate()
 	if err != nil {
 		log.Fatalf("Failed to deflate: %v", err)
 	}

@@ -32,7 +32,7 @@ func (i *inflater) Inflate() error {
 	}
 
 	w := s.Bytes()
-	_, err := i.out.Write(w)
+	_, err := i.out.Write(append(w, '\n'))
 	if err != nil {
 		return err
 	}

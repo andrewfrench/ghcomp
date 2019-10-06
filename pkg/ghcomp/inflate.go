@@ -25,26 +25,26 @@ func NewInflater(in io.Reader, out io.Writer) Inflater {
 }
 
 func (i *inflater) Inflate() error {
-	s := bufio.NewScanner(i.in)
-	s.Split(ScanSegment)
-	if !s.Scan() {
+	scanner := bufio.NewScanner(i.in)
+	scanner.Split(ScanSegment)
+	if !scanner.Scan() {
 		return fmt.Errorf("failed to scan input source")
 	}
 
-	w := s.Bytes()
-	_, err := i.out.Write(append(w, '\n'))
+	window := scanner.Bytes()
+	_, err := i.out.Write(append(window, '\n'))
 	if err != nil {
 		return err
 	}
 
-	for s.Scan() {
-		seg := s.Bytes()
-		off := len(w) - len(seg)
-		for i := range seg {
-			w[off+i] = seg[i]
+	for scanner.Scan() {
+		mask := scanner.Bytes()
+		offset := len(window) - len(mask)
+		for i := range mask {
+			window[offset+i] = mask[i]
 		}
 
-		_, err := i.out.Write(append(w, '\n'))
+		_, err := i.out.Write(append(window, '\n'))
 		if err != nil {
 			return err
 		}

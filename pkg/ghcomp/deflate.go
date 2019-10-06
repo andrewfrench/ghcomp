@@ -15,37 +15,37 @@ type deflater struct {
 	prev byte
 }
 
-type n struct {
-	b byte
-	m map[byte]*n
-	p *n
+type node struct {
+	value    byte
+	children map[byte]*node
+	parent   *node
 }
 
 func NewDeflater(in io.Reader, out io.Writer) Deflater {
-	s := &deflater{
+	d := &deflater{
 		in:  in,
 		out: out,
 	}
 
-	return s
+	return d
 }
 
 func (d *deflater) Deflate() error {
 	scanner := bufio.NewScanner(d.in)
 	scanner.Split(bufio.ScanLines)
 
-	t := &n{
-		b: GlobalStart,
-		m: make(map[byte]*n),
+	root := &node{
+		value:    GlobalStart,
+		children: make(map[byte]*node),
 	}
 
-	var l []byte
+	var geohash []byte
 	for scanner.Scan() {
-		l = scanner.Bytes()
-		d.entree(t, l)
+		geohash = scanner.Bytes()
+		d.entree(root, geohash)
 	}
 
-	err := d.descend(t)
+	err := d.descend(root)
 	if err != nil {
 		return err
 	}
@@ -53,30 +53,30 @@ func (d *deflater) Deflate() error {
 	return nil
 }
 
-func (d *deflater) entree(t *n, l []byte) {
-	if len(l) == 0 {
+func (d *deflater) entree(current *node, remaining []byte) {
+	if len(remaining) == 0 {
 		return
 	}
 
-	if t.m[l[0]] == nil {
-		t.m[l[0]] = &n{
-			b: l[0],
-			m: make(map[byte]*n),
-			p: t,
+	if current.children[remaining[0]] == nil {
+		current.children[remaining[0]] = &node{
+			value:    remaining[0],
+			children: make(map[byte]*node),
+			parent:   current,
 		}
 	}
 
-	d.entree(t.m[l[0]], l[1:])
+	d.entree(current.children[remaining[0]], remaining[1:])
 }
 
-func (d *deflater) descend(t *n) error {
-	err := d.put(t.b)
+func (d *deflater) descend(current *node) error {
+	err := d.put(current.value)
 	if err != nil {
 		return err
 	}
 
-	for k := range t.m {
-		err := d.descend(t.m[k])
+	for k := range current.children {
+		err := d.descend(current.children[k])
 		if err != nil {
 			return err
 		}

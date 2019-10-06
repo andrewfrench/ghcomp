@@ -42,6 +42,12 @@ func main() {
 }
 ```
 
+Deflate geohash data directly from the terminal using `cmd/deflate/deflate.go`:
+
+```bash
+$ go run cmd/deflate/deflate.go data.txt deflated.txt
+```
+
 ## Inflate
 
 The Inflate utility accepts an `io.Reader` providing deflated geohash data as produced by the Deflate utility.
@@ -67,4 +73,10 @@ func main() {
 		log.Fatalf("failed to inflate data: %v", err)
 	}
 }
+```
+
+Inflate geohash data directly from the terminal using `cmd/inflate/inflate.go`:
+
+```bash
+$ go run cmd/inflate/inflate.go deflated.txt inflated.txt
 ```

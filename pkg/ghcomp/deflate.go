@@ -19,7 +19,6 @@ type n struct {
 	b byte
 	m map[byte]*n
 	p *n
-	v bool
 }
 
 func NewDeflater(in io.Reader, out io.Writer) Deflater {
@@ -77,11 +76,9 @@ func (d *deflater) descend(t *n) error {
 	}
 
 	for k := range t.m {
-		if !t.m[k].v {
-			err := d.descend(t.m[k])
-			if err != nil {
-				return err
-			}
+		err := d.descend(t.m[k])
+		if err != nil {
+			return err
 		}
 	}
 

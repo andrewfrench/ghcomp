@@ -44,7 +44,7 @@ func (i *inflater) Inflate() error {
 			w[off+i] = seg[i]
 		}
 
-		_, err := i.out.Write(w)
+		_, err := i.out.Write(append(w, '\n'))
 		if err != nil {
 			return err
 		}

@@ -9,7 +9,7 @@ import (
 
 func main() {
 	if len(os.Args) != 3 {
-		log.Fatalf("Requires two inputs: an source file and a destination file")
+		log.Fatalf("Requires two inputs: a source file and a destination file")
 	}
 
 	in, err := os.Open(os.Args[1])

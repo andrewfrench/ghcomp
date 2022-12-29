@@ -22,8 +22,8 @@ func main() {
 		log.Fatalf("Failed to create destination file: %v", err)
 	}
 
-	err = ghcomp.NewInflater(in, out).Inflate()
+	err = ghcomp.Deflate(in, out)
 	if err != nil {
-		log.Fatalf("Failed to inflate: %v", err)
+		log.Fatalf("Failed to deflate: %v", err)
 	}
 }

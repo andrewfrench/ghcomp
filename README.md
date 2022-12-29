@@ -33,7 +33,7 @@ func main() {
 	in, _ := os.Open("data.txt")
 	out, _ := os.Create("deflated.txt")
 
-	err := ghcomp.NewDeflater(in, out).Deflate()
+	err := ghcomp.Deflate(in, out)
 	if err != nil {
 		log.Fatalf("failed to deflate data: %v", err)
 	}
@@ -70,7 +70,7 @@ func main() {
 	in, _ := os.Open("deflated.txt")
 	out, _ := os.Create("inflated.txt")
 
-	err := ghcomp.NewInflater(in, out).Inflate()
+	err := ghcomp.Inflate(in, out)
 	if err != nil {
 		log.Fatalf("failed to inflate data: %v", err)
 	}
@@ -81,4 +81,38 @@ Inflate geohash data directly from the terminal using `cmd/inflate/inflate.go`:
 
 ```bash
 $ go run cmd/inflate/inflate.go deflated.txt inflated.txt
+```
+
+The ghcomp tree can be interacted with directly as well. You can load deflated sets into the tree, add geohashes, combine sets, then write the tree in its inflated or deflated form.
+```go
+package main
+
+import (
+	"os"
+	"log"
+	
+	"github.com/andrewfrench/ghcomp"
+)
+
+func main() {
+	in, _ := os.Open("deflated.txt")
+	out, _ := os.Create("inflated.txt")
+
+	precision := 12
+	tree := ghcomp.New(precision)
+	err := tree.EntreeDeflated(in)
+	if err != nil {
+		log.Fatalf("failed to load deflated data: %v", err)
+    }
+	
+	err = tree.Entree("abcabcabcabc")
+	if err != nil {
+		log.Fatalf("failed to entree: %v", err)
+    }
+	
+	err = tree.WriteInflated(out)
+	if err != nil {
+		log.Fatalf("failed to write inflated data: %v", err)
+	}
+}
 ```

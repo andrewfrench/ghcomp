@@ -5,33 +5,9 @@ import (
 	"io"
 )
 
-type Deflater interface {
-	Deflate() error
-}
-
-type deflater struct {
-	in   io.Reader
-	out  io.Writer
-	prev byte
-}
-
-type node struct {
-	value    byte
-	children map[byte]*node
-	parent   *node
-}
-
-func NewDeflater(in io.Reader, out io.Writer) Deflater {
-	d := &deflater{
-		in:  in,
-		out: out,
-	}
-
-	return d
-}
-
-func (d *deflater) Deflate() error {
-	scanner := bufio.NewScanner(d.in)
+// Deflate reads inflated geohash data from an io.Reader and writes deflated data to an io.Writer.
+func Deflate(in io.Reader, out io.Writer) error {
+	scanner := bufio.NewScanner(in)
 	scanner.Split(bufio.ScanLines)
 
 	root := &node{
@@ -42,10 +18,11 @@ func (d *deflater) Deflate() error {
 	var geohash []byte
 	for scanner.Scan() {
 		geohash = scanner.Bytes()
-		d.entree(root, geohash)
+		root.entree(geohash)
 	}
 
-	err := d.descend(root)
+	s := deflate{out: out}
+	err := s.descend(root)
 	if err != nil {
 		return err
 	}
@@ -53,30 +30,19 @@ func (d *deflater) Deflate() error {
 	return nil
 }
 
-func (d *deflater) entree(current *node, remaining []byte) {
-	if len(remaining) == 0 {
-		return
-	}
-
-	if current.children[remaining[0]] == nil {
-		current.children[remaining[0]] = &node{
-			value:    remaining[0],
-			children: make(map[byte]*node),
-			parent:   current,
-		}
-	}
-
-	d.entree(current.children[remaining[0]], remaining[1:])
+type deflate struct {
+	prev byte
+	out  io.Writer
 }
 
-func (d *deflater) descend(current *node) error {
+func (d *deflate) descend(current *node) error {
 	err := d.put(current.value)
 	if err != nil {
 		return err
 	}
 
 	for k := range current.children {
-		err := d.descend(current.children[k])
+		err = d.descend(current.children[k])
 		if err != nil {
 			return err
 		}
@@ -90,7 +56,7 @@ func (d *deflater) descend(current *node) error {
 	return nil
 }
 
-func (d *deflater) put(b byte) error {
+func (d *deflate) put(b byte) error {
 	if b == GlobalStart {
 		return nil
 	}

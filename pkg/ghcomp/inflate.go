@@ -6,33 +6,17 @@ import (
 	"io"
 )
 
-type Inflater interface {
-	Inflate() error
-}
-
-type inflater struct {
-	in  io.Reader
-	out io.Writer
-}
-
-func NewInflater(in io.Reader, out io.Writer) Inflater {
-	d := &inflater{
-		in:  in,
-		out: out,
-	}
-
-	return d
-}
-
-func (i *inflater) Inflate() error {
-	scanner := bufio.NewScanner(i.in)
+// Inflate reads deflated geohash data in an io.Reader and writes the inflated values to an io.Writer. This function
+// can inflate the deflated values directly without using a tree.
+func Inflate(in io.Reader, out io.Writer) error {
+	scanner := bufio.NewScanner(in)
 	scanner.Split(ScanSegment)
 	if !scanner.Scan() {
 		return fmt.Errorf("failed to scan input source")
 	}
 
 	window := scanner.Bytes()
-	_, err := i.out.Write(append(window, '\n'))
+	_, err := out.Write(append(window, '\n'))
 	if err != nil {
 		return err
 	}
@@ -44,7 +28,7 @@ func (i *inflater) Inflate() error {
 			window[offset+i] = mask[i]
 		}
 
-		_, err := i.out.Write(append(window, '\n'))
+		_, err = out.Write(append(window, '\n'))
 		if err != nil {
 			return err
 		}
@@ -53,21 +37,37 @@ func (i *inflater) Inflate() error {
 	return nil
 }
 
-var ScanSegment bufio.SplitFunc = func(data []byte, atEOF bool) (advance int, token []byte, err error) {
-	if atEOF {
-		return
+type inflate struct {
+	out       io.Writer
+	precision int
+}
+
+func (in *inflate) descend(current *node) error {
+	var err error
+	for k := range current.children {
+		err = in.descend(current.children[k])
+		if err != nil {
+			return err
+		}
 	}
 
-	advance = 0
-	token = make([]byte, 0)
-	for i := range data {
-		advance++
-		if data[i] == SegmentStop {
-			return
+	if len(current.children) == 0 {
+		n := current
+		val := make([]byte, in.precision)
+		for i := 0; i < in.precision; i++ {
+			if n.parent == nil {
+				break
+			}
+
+			val[in.precision-i-1] = n.value
+			n = n.parent
 		}
 
-		token = append(token, data[i])
+		_, err = in.out.Write(append(val, '\n'))
+		if err != nil {
+			return err
+		}
 	}
 
-	return
+	return nil
 }

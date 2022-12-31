@@ -13,7 +13,7 @@ var (
 
 const (
 	GlobalStart = '!'
-	SegmentStop = '.'
+	SegmentStop = '\n'
 )
 
 // Tree is the receiver for publicly exported methods.
@@ -57,7 +57,6 @@ func (t *Tree) Entree(value []byte) error {
 // EntreeDeflated adds deflated geohash values to the tree.
 func (t *Tree) EntreeDeflated(in io.Reader) error {
 	scanner := bufio.NewScanner(in)
-	scanner.Split(ScanSegment)
 	if !scanner.Scan() {
 		return fmt.Errorf("failed to scan input source")
 	}
@@ -82,24 +81,4 @@ func (t *Tree) EntreeDeflated(in io.Reader) error {
 	}
 
 	return nil
-}
-
-// ScanSegment reads a chunk of deflated geohash data delimited by SegmentStop.
-var ScanSegment bufio.SplitFunc = func(data []byte, atEOF bool) (advance int, token []byte, err error) {
-	if atEOF {
-		return
-	}
-
-	advance = 0
-	token = make([]byte, 0)
-	for i := range data {
-		advance++
-		if data[i] == SegmentStop {
-			return
-		}
-
-		token = append(token, data[i])
-	}
-
-	return
 }

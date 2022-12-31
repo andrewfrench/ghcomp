@@ -10,7 +10,6 @@ import (
 // can inflate the deflated values directly without using a tree.
 func Inflate(in io.Reader, out io.Writer) error {
 	scanner := bufio.NewScanner(in)
-	scanner.Split(ScanSegment)
 	if !scanner.Scan() {
 		return fmt.Errorf("failed to scan input source")
 	}

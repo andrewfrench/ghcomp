@@ -10,7 +10,7 @@ import (
 const (
 	precision = 12
 	inflated  = "bdvkhunfnc90\nbdvkj7vyvtz5\nbdvkjkjbpr1t\nbdvkjkjbremh\nbdvkjkn00jdn\n"
-	deflated  = "bdvkhunfnc90.j7vyvtz5.kjbpr1t.remh.n00jdn."
+	deflated  = "bdvkhunfnc90\nj7vyvtz5\nkjbpr1t\nremh\nn00jdn\n"
 )
 
 func TestTree_Entree(t *testing.T) {

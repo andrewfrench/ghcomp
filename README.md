@@ -51,7 +51,11 @@ $ go run cmd/deflate/deflate.go data.txt deflated.txt
 The Inflate utility accepts an `io.Reader` providing deflated geohash data as produced by the Deflate utility, for example:
 
 ```
-bdvkhunfnc90.j7vyvtz5.kjbremh.pr1t.n00jdn.
+bdvkhunfnc90
+j7vyvtz5
+kjbremh
+pr1t
+n00jdn
 ```
 
 The following example reads an input file, `deflated.txt`, and writes the inflated dataset to `inflated.txt`.
